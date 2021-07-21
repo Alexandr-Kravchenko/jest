@@ -12,7 +12,6 @@ let time = {
 
 let task = testFunc(1, 'someTitle', true, date);
 
-
 describe('task', () => {
     it('to toggle bool value', () => {
         expect(task.toggle()).toBe(false);

@@ -15,22 +15,34 @@ function drawField(field) {
     return result.join('\n')
 }
 
+function isXO(symbol) {
+    return symbol === 'x' || symbol === 'o';
+}
+
+function isCorrectPos(pos) {
+    return pos[0] >= 0 && pos[0] <= 2 && pos[1] >= 0 && pos[1] <= 2;
+}
+
 function go(pos, symbol) {
-    if(play === true) {
-        if(!checkField(gameField)) {
-            stopGame();
-        } else {
-            let cell = gameField[pos[0]][[pos[1]]];
-            if(isFree(cell)) {
-                gameField[pos[0]][[pos[1]]] = symbol;
+    if(play) {
+        if(isXO(symbol) && isCorrectPos(pos)) {
+            if(!checkField(gameField)) {
+                stopGame();
             } else {
-                console.log('Клетка занята')
+                if(isFree(gameField[pos[0]][[pos[1]]])) {
+                    gameField[pos[0]][[pos[1]]] = symbol;
+                } else {
+                    console.log('Клетка занята')
+                }
+                console.log(drawField(gameField));
+                return console.log(checkVictory(gameField, symbol));
             }
+        } else {
             console.log(drawField(gameField));
-            return console.log(checkVictory(gameField, symbol));
+            console.log('Или не тем ходишь, или далеко хочешь');
         }
     } else {
-        console.log('Игра остановлена. Ход невозможен')
+        console.log('Игра остановлена. Ход невозможен');
     }
 }
 
@@ -81,11 +93,11 @@ function checkField (field) {
     for(let i = 0; i < field.length; i += 1) {
         result.push(field[i].some(isFree));
     }
-    return result.some((bool) => bool === true)
+    return result.some((bool) => bool === true);
 }
 
 function isFree(pos) {
-    return pos === " "
+    return pos === " ";
 }
 
 function stopGame () {
@@ -94,8 +106,8 @@ function stopGame () {
 }
 
 function main (){
-    go([0,0],'x');
-    go([0,0],'o');
+    go([0,3],'x');
+/*     go([0,0],'o');
     go([1,0],'o');
     go([2,0],'x');
 
@@ -108,9 +120,9 @@ function main (){
     go([2,2],'x');
 
     go([1,1],'o');
-    go([1,1],'o');
+    go([1,1],'o'); */
 }
 
-main();
+//main();
 
-export {drawField, stopGame, isFree, checkField, checkVictory, go, play};
+export {drawField, stopGame, isFree, checkField, checkVictory, go, play, gameField, isXO, isCorrectPos};
