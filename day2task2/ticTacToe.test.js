@@ -1,5 +1,6 @@
 import {drawField, stopGame, isFree, checkField, checkVictory, go, play, gameField, isXO, isCorrectPos} from './ticTacToe';
 
+
 describe('ticTacToe', () => {
     it('has gameField empty cells', () => {
         expect(checkField(gameField)).toBe(true);
