@@ -1,18 +1,29 @@
 
-let gameField = [
-    [' ',' ',' '],
-    [' ',' ',' '],
-    [' ',' ',' ']
-]
+function generateGameField() {
+    return [
+        [' ',' ',' '],
+        [' ',' ',' '],
+        [' ',' ',' ']
+    ]
+}
 
-let play = true;
+function createGameState() {
+    return {
+        play: true,
+        turn: 'x'
+    }
+}
+
+function getGameStatus(state) {
+    return state.play;
+}
 
 function drawField(field) {
     let result = [];
     for(let i = 0; i < field.length; i += 1) {
         result.push(field[i].join('|'))
     }
-    return result.join('\n')
+    return result.join('\n');
 }
 
 function isXO(symbol) {
@@ -23,72 +34,85 @@ function isCorrectPos(pos) {
     return pos[0] >= 0 && pos[0] <= 2 && pos[1] >= 0 && pos[1] <= 2;
 }
 
-function go(pos, symbol) {
-    if(play) {
+function isCorrectOrder(symbol, gameState) {
+    return gameState.turn === symbol;
+}
+
+function changeTurn(symbol, gameState) {
+    return gameState.turn = symbol === 'x' ? 'o' : 'x';
+}
+
+function move(pos, symbol, field, state) {
+    if(getGameStatus(state)) {
         if(isXO(symbol) && isCorrectPos(pos)) {
-            if(!checkField(gameField)) {
-                stopGame();
+            if(!checkField(field)) {
+                toggleGame(state);
             } else {
-                if(isFree(gameField[pos[0]][[pos[1]]])) {
-                    gameField[pos[0]][[pos[1]]] = symbol;
+                if(isFree(field[pos[0]][[pos[1]]])) {
+                    if(isCorrectOrder(symbol, state)) {
+                        field[pos[0]][[pos[1]]] = symbol;
+                        changeTurn(symbol, state);
+                    } else {
+                        console.log('Не твой ход');
+                    }
                 } else {
-                    console.log('Клетка занята')
+                    console.log('Клетка занята');
                 }
-                console.log(drawField(gameField));
-                return console.log(checkVictory(gameField, symbol));
+                console.log(drawField(field));
+                return console.log(checkVictory(field, symbol, state));
             }
         } else {
-            console.log(drawField(gameField));
-            console.log('Или не тем ходишь, или далеко хочешь');
+            console.log(drawField(field));
+            return 'Или не тем ходишь, или далеко хочешь';
         }
     } else {
-        console.log('Игра остановлена. Ход невозможен');
+        return console.log('Игра остановлена. Ход невозможен');
     }
 }
 
-function checkVictory (field, symbol) {
+function checkVictory(field, symbol, state) {
     if(field[0][0] === symbol && field[0][1] === symbol && field[0][2] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!` 
     }
     if(field[1][0] === symbol && field[1][1] === symbol && field[1][2] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
     if(field[2][0] === symbol && field[2][1] === symbol && field[2][2] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
 
     if(field[0][0] === symbol && field[1][0] === symbol && field[2][0] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
     if(field[0][1] === symbol && field[1][1] === symbol && field[2][1] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
     if(field[0][2] === symbol && field[1][2] === symbol && field[2][2] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
 
     if(field[0][0] === symbol && field[1][1] === symbol && field[2][2] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
     if(field[0][2] === symbol && field[1][1] === symbol && field[2][0] === symbol){
-        stopGame();
+        toggleGame(state);
         return `${symbol} Победил!`
     }
-    if(!checkField(gameField)) {
-        stopGame();
+    if(!checkField(field)) {
+        toggleGame(state);
         return 'Ничья'
     }
     return `Ходи!`
 }
 
-function checkField (field) {
+function checkField(field) {
     let result = [];
     for(let i = 0; i < field.length; i += 1) {
         result.push(field[i].some(isFree));
@@ -100,29 +124,50 @@ function isFree(pos) {
     return pos === " ";
 }
 
-function stopGame () {
-    play = false;
-    return play;
+function toggleGame(state) {
+    return state.play = !state.play;
 }
 
-function main (){
-    go([0,3],'x');
-/*     go([0,0],'o');
-    go([1,0],'o');
-    go([2,0],'x');
-
-    go([0,1],'o');
-    go([1,1],'x');
-    go([2,1],'o');
-
-    go([0,2],'x');
-    go([1,2],'o');
-    go([2,2],'x');
-
-    go([1,1],'o');
-    go([1,1],'o'); */
+function move(pos, symbol) {
+    return move(pos, symbol, gameField, gameState);
 }
 
-//main();
+const gameField = generateGameField();
 
-export {drawField, stopGame, isFree, checkField, checkVictory, go, play, gameField, isXO, isCorrectPos};
+const gameState = createGameState();
+
+/* function main (){
+    move([0,1],'x', gameField, gameState);
+    move([0,0],'o', gameField, gameState);
+    move([1,0],'o', gameField, gameState);
+    move([2,0],'x', gameField, gameState);
+
+    move([0,1],'o', gameField, gameState);
+    move([1,1],'x', gameField, gameState);
+    move([2,1],'o', gameField, gameState);
+
+    move([0,2],'x', gameField, gameState);
+    move([1,2],'o', gameField, gameState);
+    move([1,1],'x', gameField, gameState);
+    move([1,0],'o', gameField, gameState);
+    move([1,0],'o', gameField, gameState);
+    move([1,0],'o', gameField, gameState);
+} */
+
+// main();
+
+export { 
+        getGameStatus,
+        createGameState,
+        generateGameField,
+        drawField,
+        checkField,
+        checkVictory,
+        move,
+        changeTurn,
+        toggleGame,
+        isFree,
+        isXO, 
+        isCorrectPos,
+        isCorrectOrder,
+    };
